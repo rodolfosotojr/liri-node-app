@@ -1,24 +1,49 @@
 require("dotenv").config();
 
 var Spotify = require('node-spotify-api');
+var axios = require("axios");
 var keys = require("./keys.js");
 var spotify = new Spotify(keys.spotify);
 var userInput = process.argv;
 var infoArray = [];
 var Input = [];
+var fs = require("fs");
 
 if (userInput[2] === "spotify-this-song") {
 
-    if(userInput.length <=3){
+    if (userInput.length <= 3) {
         console.log("Hello World");
-    }else if(userInput.length > 3) {
+    } else if (userInput.length > 3) {
 
-    for (i = 3; i < userInput.length; i++) {
-        Input.push(userInput[i]);
+        for (i = 3; i < userInput.length; i++) {
+            Input.push(userInput[i]);
+        }
+        spotifyThisSong(Input.join(" "));
     }
-    spotifyThisSong(Input.join(" "));
-    }
+}
 
+else if (userInput[2] === "movie-this") {
+    if (userInput.length <= 3) {
+        console.log("Hello World");
+    } else if (userInput.length > 3) {
+
+        for (i = 3; i < userInput.length; i++) {
+            Input.push(userInput[i]);
+        }
+        movieThis(Input.join(" "));
+    }
+}
+
+else if (userInput[2] === "do-what-it-says") {
+    if (userInput.length <= 3) {
+        console.log("Hello World");
+    } else if (userInput.length > 3) {
+
+        for (i = 3; i < userInput.length; i++) {
+            Input.push(userInput[i]);
+        }
+        spotifyThisSong(Input.join(" "));
+    }
 };
 
 function spotifyThisSong(track) {
@@ -68,6 +93,30 @@ function spotifyThisSong(track) {
 
 
 };
+
+function movieThis(movieName) {
+    var url = "http://www.omdbapi.com/?apikey=trilogy&type=movie&t=" + movieName + "&plot=short";
+    axios.get(url).then(
+
+        function (response) {
+            var r = response.data
+            console.log("Title: " + r.Title + "\nYear: " + r.Year + "\nIMDB Rating: " + r.Rated + "\nRotten Tomatoes Raing: " + r.Ratings[1] + "\nCountry Produced: " + r.Country +
+                "\nLanguage: " + r.Language + "\nPlot: " + r.Plot + "\nActors: " + r.Actors);
+        }
+    )
+};
+
+function doFs(input)
+
+fs.readFile("random.txt", "utf8", function (error, data) {
+
+    if (error) {
+        return console.log(error);
+    }
+
+    spotifyThisSong(data);
+
+});
 
 
 
