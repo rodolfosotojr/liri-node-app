@@ -3,6 +3,7 @@ require("dotenv").config();
 var Spotify = require('node-spotify-api');
 var axios = require("axios");
 var keys = require("./keys.js");
+var moment = require("moment");
 var spotify = new Spotify(keys.spotify);
 var userInput = process.argv;
 var infoArray = [];
@@ -35,6 +36,13 @@ else if (userInput[2] === "movie-this") {
 }
 
 else if (userInput[2] === "do-what-it-says") {
+    doWhatItSays("random.txt");
+
+
+
+}
+
+else if (userInput[2] === "concert-this") {
     if (userInput.length <= 3) {
         console.log("Hello World");
     } else if (userInput.length > 3) {
@@ -42,9 +50,11 @@ else if (userInput[2] === "do-what-it-says") {
         for (i = 3; i < userInput.length; i++) {
             Input.push(userInput[i]);
         }
-        spotifyThisSong(Input.join(" "));
+        concertThis(Input.join(" "));
     }
-};
+}
+
+;
 
 function spotifyThisSong(track) {
 
@@ -53,10 +63,10 @@ function spotifyThisSong(track) {
         .then(function (response) {
             // console.log(response.tracks.items[0].artists[0].name);
 
-            for (i = 0; i < response.tracks.items.length; i++) {
+            var dataObject = {};
+            var artists = [];
 
-                var dataObject = {};
-                var artists = [];
+            for (i = 0; i < response.tracks.items.length; i++) {
 
                 for (j = 0; j < response.tracks.items[i].artists.length; j++) {
 
@@ -76,16 +86,13 @@ function spotifyThisSong(track) {
 
             for (i = 0; i < infoArray.length; i++) {
 
+                console.log("Artist: " + infoArray[i].artists + "\nTrack: " + infoArray[i].trackName + "\nAlbum: " + infoArray[i].album + "\nPreview Link: " + infoArray[i].link + "\n");
+
                 if (infoArray[i].link === null) {
                     infoArray[i].link = "No Link Available";
                 }
-
-                console.log("Artist: " + infoArray[i].artists + "\nTrack: " + infoArray[i].trackName + "\nAlbum: " + infoArray[i].album + "\nPreview Link: " + infoArray[i].link + "\n");
-
             }
-
         })
-
 
         .catch(function (err) {
             console.log(err);
@@ -106,17 +113,46 @@ function movieThis(movieName) {
     )
 };
 
-function doFs(input)
 
-fs.readFile("random.txt", "utf8", function (error, data) {
+function doWhatItSays(refFile) {
 
-    if (error) {
-        return console.log(error);
-    }
+    fs.readFile(refFile, "utf8", function (error, data) {
 
-    spotifyThisSong(data);
+        if (error) {
+            return console.log(error);
+        }
 
-});
+        var dataInput = data.replace(/"/g, "");
+        dataInput = dataInput.split(",");
+
+        spotifyThisSong(dataInput[1]);
+    })
+
+};
+
+function concertThis(artist) {
+    var queryURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
+
+    axios.get(queryURL).then(
+
+        function (response) {
+            var r = response.data
+
+            // console.log(r[0])
+
+            for(i = 0; i < r.length; i++){
+
+            var date = r[i].datetime;
+
+            
+            console.log(r[i].venue.name);
+            console.log(r[i].venue.city + ", " + r[i].venue.region);
+            console.log(moment(date).format('LLL') + "\n");
+
+            }
+        }
+    )
+};
 
 
 
