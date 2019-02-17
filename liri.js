@@ -141,9 +141,11 @@ function movieThis(movieName) {
 
         function (response) {
 
-            //Create a variable to call once and make it simple
+            //Create a variable to call once and make it simple. Rotten tomatoes was nested inside of another "Ratings" Object so I parsed what i needed and
+            //created a variable for that.
             var r = response.data
-            console.log("\nTitle: " + r.Title + "\nYear: " + r.Year + "\nIMDB Rating: " + r.Rated + "\nRotten Tomatoes Raing: " + r.Ratings[1] + "\nCountry Produced: " + r.Country +
+            var rotten = r.Ratings[1].Source + ": " + r.Ratings[1].Value
+            console.log("\nTitle: " + r.Title + "\nYear: " + r.Year + "\nIMDB Rating: " + r.Rated + "\n" + rotten + "\nCountry Produced: " + r.Country +
                 "\nLanguage: " + r.Language + "\nPlot: " + r.Plot + "\nActors: " + r.Actors);
         }
     )
@@ -197,6 +199,7 @@ function concertThis(artist) {
                 console.log("\nVenue: " + r[i].venue.name);
                 console.log("Location: " + r[i].venue.city + ", " + r[i].venue.region);
                 console.log("Date: " + moment(date).format('L') + "\n");
+
             }
         }
     )
